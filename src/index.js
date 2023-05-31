@@ -8,6 +8,8 @@ const port = 4000;
 
 // HTTP
 app.use(morgan("combined"));
+// Using static file
+app.use(express.static(path.join(__dirname, "public")));
 // Template engine
 app.engine("handlebars", handlebars.engine());
 app.set("view engine", "handlebars");
