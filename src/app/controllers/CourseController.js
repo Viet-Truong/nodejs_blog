@@ -18,6 +18,9 @@ class CourseController {
 
     store(req, res, next) {
         const formData = req.body;
+        if (formData.image === '') {
+            formData.image = `https://img.youtube.com/vi/${formData.videoID}/hqdefault.jpg`;
+        }
         const course = new Course(formData);
         course.save().then(() => res.redirect(`/`));
     }
