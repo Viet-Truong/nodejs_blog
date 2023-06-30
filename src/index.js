@@ -9,11 +9,6 @@ const port = 4000;
 const route = require('./routes');
 const db = require('./config/db');
 
-// connect db
-db.connect();
-
-route(app);
-
 // HTTP
 app.use(morgan('combined'));
 // Using static file
@@ -25,6 +20,11 @@ app.use(express.json());
 app.engine('handlebars', handlebars.engine());
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'resources', 'views'));
+
+// connect db
+db.connect();
+
+route(app);
 // console.log(path.join(__dirname, "views"));
 
 app.listen(port, () => {
