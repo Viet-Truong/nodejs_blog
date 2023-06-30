@@ -9,13 +9,13 @@ class CourseController {
             })
             .catch(next);
     }
+
     // [GET] /course/create
     create(req, res, next) {
         res.render('courses/create');
     }
 
-    // POST /courses/store
-
+    // [POST] /courses/store
     store(req, res, next) {
         const formData = req.body;
         if (formData.image === '') {
@@ -23,6 +23,26 @@ class CourseController {
         }
         const course = new Course(formData);
         course.save().then(() => res.redirect(`/`));
+    }
+
+    // [GET] /:id/edit
+    edit(req, res, next) {
+        Course.findById(req.params.id)
+            .lean()
+            .then((course) => {
+                res.render('courses/update', { course });
+            })
+            .catch(next);
+    }
+
+    // [PUT] /courses/:id
+    update(req, res, next) {
+        Course.updateOne({ _id: req.params.id }, req.body)
+            .lean()
+            .then(() => {
+                res.redirect('/me/stored/courses');
+            })
+            .catch(next);
     }
 }
 

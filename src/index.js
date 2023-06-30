@@ -1,7 +1,9 @@
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
+var methodOverride = require('method-override');
 var handlebars = require('express-handlebars');
+const hbs = require('handlebars');
 
 const app = express();
 const port = 4000;
@@ -9,6 +11,11 @@ const port = 4000;
 const route = require('./routes');
 const db = require('./config/db');
 
+hbs.registerHelper('sum', function (a, b) {
+    return parseInt(a) + parseInt(b);
+});
+// Override method
+app.use(methodOverride('_method'));
 // HTTP
 app.use(morgan('combined'));
 // Using static file
