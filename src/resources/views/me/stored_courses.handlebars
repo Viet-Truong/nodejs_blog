@@ -19,10 +19,53 @@
                     </td>
                     <td>
                         <a href="/courses/{{this._id}}/edit" class="btn btn-link">Sửa</a>
-                        <a href="" class="btn btn-link">Xoá</a>
+                        <a href="" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#delete_course" data-id="{{this._id}}" id="btn_delete">Xoá</a>
                     </td>
                 </tr>
             {{/each}}
         </tbody>
     </table>
 </div>
+
+
+{{!-- Show modal delete course --}}
+<div class="modal fade" id="delete_course" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Xoá</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Bạn có chắc chắn muốn xoá khoá học này không?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="btn_delete_of_modal">Xác nhận</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+{{!-- DELETE FORM HIDDEN --}}
+
+<form name='form_delete' method="POST"></form>
+
+<script>
+    const formDelete = document.forms['form_delete'];
+    const btnDeleteOfModal = document.getElementById('btn_delete_of_modal')
+    const btnDelete = document.querySelectorAll('#btn_delete')
+
+    let courseID;
+    for(var i = 0; i < btnDelete.length; i++) {
+        btnDelete[i].onclick = function(e) {
+            courseID = this.getAttribute('data-id');
+            //console.log(courseID);
+
+            btnDeleteOfModal.onclick= function(e){  // sau đó click vào button confirm xóa để 
+                formDelete.action = `/courses/${courseID}?_method=DELETE`; // truyền  url chứa id của từng khóa học vào action và với method DELETE
+                formDelete.submit();
+            }
+        }
+    }
+</script>
