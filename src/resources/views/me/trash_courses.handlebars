@@ -1,7 +1,7 @@
 <div class="container">
     <div>
-        <h3>Khoá học của tôi</h3>
-        <a href="/me/trash/courses">Thùng rác</a>
+        <a href="/me/stored/courses">Khoá học của tôi</a>
+        <h3>Khoá học đã xoá</h3>
     </div>
     <table class="table table-striped">
         <thead>
@@ -22,15 +22,15 @@
                         <img src="{{this.image}}" width="100px" height="60px"/>
                     </td>
                     <td>
-                        <a href="/courses/{{this._id}}/edit" class="btn btn-link">Sửa</a>
-                        <a href="" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#delete_course" data-id="{{this._id}}" id="btn_delete">Xoá</a>
+                        <a class="btn btn-link btn-restore" data-id="{{this._id}}">Khôi phục</a>
+                        <a href="" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#delete_course" data-id="{{this._id}}" id="btn_delete">Xoá vĩnh viễn</a>
                     </td>
                 </tr>
 
             {{else}}
 
             <tr>
-                <td colspan="5">Bạn chưa đăng khoá học nào <a href="/courses/create">Đăng khoá học</a></td>
+                <td colspan="5">Thùng rác trống</td>
             </tr>
             {{/each}}
         </tbody>
@@ -60,11 +60,14 @@
 {{!-- DELETE FORM HIDDEN --}}
 
 <form name='form_delete' method="POST"></form>
+<form name='form_restore' method="POST"></form>
 
 <script>
     const formDelete = document.forms['form_delete'];
+    const formRestore= document.forms['form_restore'];
     const btnDeleteOfModal = document.getElementById('btn_delete_of_modal')
     const btnDelete = document.querySelectorAll('#btn_delete')
+    const btnRestore = document.querySelectorAll('.btn-restore')
 
     let courseID;
     for(var i = 0; i < btnDelete.length; i++) {
@@ -73,9 +76,22 @@
             //console.log(courseID);
 
             btnDeleteOfModal.onclick= function(e){  // sau đó click vào button confirm xóa để 
-                formDelete.action = `/courses/${courseID}?_method=DELETE`; // truyền  url chứa id của từng khóa học vào action và với method DELETE
+                formDelete.action = `/courses/${courseID}/force?_method=DELETE`; // truyền  url chứa id của từng khóa học vào action và với method DELETE
                 formDelete.submit();
             }
         }
     }
+
+
+    for(var i = 0; i < btnRestore.length; i++) {
+        btnRestore[i].onclick = function(e) {
+            courseID = this.getAttribute('data-id');
+            //console.log(courseID);
+
+            formRestore.action = `/courses/${courseID}/restore?_method=PATCH`; // truyền  url chứa id của từng khóa học vào action và với method DELETE
+            formRestore.submit();
+        }
+    }
+
+
 </script>

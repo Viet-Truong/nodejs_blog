@@ -17,15 +17,14 @@ class CourseController {
 
     // [POST] /courses/store
     store(req, res, next) {
-        const formData = req.body;
-        if (formData.image === '') {
-            formData.image = `https://img.youtube.com/vi/${formData.videoID}/hqdefault.jpg`;
+        if (req.body.image === '') {
+            req.body.image = `https://img.youtube.com/vi/${req.body.videoID}/hqdefault.jpg`;
         }
-        const course = new Course(formData);
+        const course = new Course(req.body);
         course.save().then(() => res.redirect(`/`));
     }
 
-    // [GET] /:id/edit
+    // [GET] /courses/:id/edit
     edit(req, res, next) {
         Course.findById(req.params.id)
             .lean()
@@ -47,9 +46,28 @@ class CourseController {
 
     // [DELETE] /courses/:id
     delete(req, res, next) {
-        Course.deleteOne({ _id: req.params.id })
+        Course.delete({ _id: req.params.id })
             .then(() => {
                 res.redirect('/me/stored/courses');
+            })
+            .catch(next);
+    }
+
+    // [DELETE] /courses/:id/force
+    force(req, res, next) {
+        Course.deleteOne({ _id: req.params.id })
+            .then(() => {
+                res.redirect('/me/trash/courses');
+            })
+            .catch(next);
+    }
+
+    // [PATCH] /courses/:id/restore
+
+    restore(req, res, next) {
+        Course.restore({ _id: req.params.id })
+            .then(() => {
+                res.redirect('/me/trash/courses');
             })
             .catch(next);
     }
