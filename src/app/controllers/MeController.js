@@ -9,6 +9,13 @@ class MeController {
                 res.render('me/stored_courses', { courses });
             })
             .catch(next);
+
+        Course.countDocumentsDeleted()
+            .lean()
+            .then((deletedCounts) => {
+                console.log(deletedCounts);
+            })
+            .catch(next);
     }
 
     // [GET] /trash/courses
