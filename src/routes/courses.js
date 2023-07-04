@@ -6,6 +6,7 @@ const courseController = require('../app/controllers/CourseController');
 // PATH "/" always last line
 router.get('/create', courseController.create);
 router.post('/store', courseController.store);
+router.post('/handle-action', courseController.handleAction);
 router.get('/:slug', courseController.show);
 router.get('/:id/edit', courseController.edit);
 router.patch('/:id/restore', courseController.restore);

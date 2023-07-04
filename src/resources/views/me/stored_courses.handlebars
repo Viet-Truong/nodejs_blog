@@ -1,11 +1,23 @@
-<div class="container">
+<form class="container mt-4" name="container-form" method="POST" action="/courses/handle-action">
     <div>
         <h3>Khoá học của tôi</h3>
         <a href="/me/trash/courses">Thùng rác</a>
     </div>
+    <div class="action" style="display: flex; justify-content: flex-end">
+        <select class="form-select" name="action" required aria-label="Default select example" style="width: 200px; margin-right: 20px">
+            <option value="">Hành động</option>
+            <option value="delete">Xoá</option>
+        </select>
+        <button class="btn btn-primary btn-action disabled">Thực hiện</button>
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>
+                <th scope="col">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkAll">
+                    </div>
+                </th>
                 <th scope="col">#</th>
                 <th scope="col">Tên khoá học</th>
                 <th scope="col">Mô tả</th>
@@ -15,7 +27,12 @@
         <tbody>
             {{#each courses}}
                 <tr>
-                    <th scope="row">{{sum @index 1}}</th>
+                    <td scope="col">
+                        <div class="form-check">
+                            <input class="form-check-input" name="courseIDs[]" type="checkbox" value="{{this._id}}">
+                        </div>
+                    </td>
+                    <td scope="row">{{sum @index 1}}</td>
                     <td>{{this.name}}</td>
                     <td>{{this.description}}</td>
                     <td>
@@ -35,7 +52,7 @@
             {{/each}}
         </tbody>
     </table>
-</div>
+</form>
 
 
 {{!-- Show modal delete course --}}
@@ -66,6 +83,45 @@
     const btnDeleteOfModal = document.getElementById('btn_delete_of_modal')
     const btnDelete = document.querySelectorAll('#btn_delete')
 
+    // input check handle
+    const formContainer = document.forms['container-form']
+    const checkAllBtn = document.getElementById('checkAll')
+    const listCheckBoxBtn = document.querySelectorAll("input[name='courseIDs[]']")
+    const btnAction = document.querySelector('.btn-action')
+
+    checkAllBtn.onchange = () => {
+        var isCheckAll = checkAllBtn.checked
+        for(let i = 0; i < listCheckBoxBtn.length; i++) {
+            listCheckBoxBtn[i].checked = isCheckAll
+        }
+        reRenderBtnAction()
+    }
+
+    for(let i = 0; i < listCheckBoxBtn.length; i++) {
+        listCheckBoxBtn[i].onchange = () => {
+            var countChecked = listCheckBoxBtn.length === document.querySelectorAll("input[name='courseIDs[]']:checked").length
+            checkAllBtn.checked = countChecked
+            reRenderBtnAction()
+        }
+    }
+
+    function reRenderBtnAction () {
+        var checkedCount = document.querySelectorAll("input[name='courseIDs[]']:checked").length
+        if(checkedCount > 1) {
+            btnAction.classList.remove('disabled')
+        } else {
+            btnAction.classList.add('disabled')
+        }
+    }
+
+    btnAction.onsubmit = () => {
+        var isSubmitable = btnAction.hasClass('disabled')
+        if(!isSubmitable) {
+            formContainer.submit()
+        }
+    }
+
+    // handle delete course
     let courseID;
     for(var i = 0; i < btnDelete.length; i++) {
         btnDelete[i].onclick = function(e) {
