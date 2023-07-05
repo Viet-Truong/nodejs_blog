@@ -1,7 +1,15 @@
-<div class="container">
+<form class="container mt-4" name="container-form" method="POST" action="/courses/trash/handle-action">
     <div>
         <a href="/me/stored/courses">Khoá học của tôi</a>
         <h3>Khoá học đã xoá</h3>
+    </div>
+    <div class="action" style="display: flex; justify-content: flex-end">
+        <select class="form-select" name="action" required aria-label="Default select example" style="width: 200px; margin-right: 20px">
+            <option value="">Hành động</option>
+            <option value="restore">Khôi phục</option>
+            <option value="force">Xoá vĩnh viễn</option>
+        </select>
+        <button class="btn btn-primary btn-action disabled">Thực hiện</button>
     </div>
     <table class="table table-striped">
         <thead>
@@ -20,6 +28,11 @@
         <tbody>
             {{#each courses}}
                 <tr>
+                    <td scope="col">
+                        <div class="form-check">
+                            <input class="form-check-input" name="courseIDs[]" type="checkbox" value="{{this._id}}">
+                        </div>
+                    </td>
                     <th scope="row">{{sum @index 1}}</th>
                     <td>{{this.name}}</td>
                     <td>{{this.description}}</td>
@@ -40,7 +53,7 @@
             {{/each}}
         </tbody>
     </table>
-</div>
+</form>
 
 
 {{!-- Show modal delete course --}}
@@ -73,6 +86,44 @@
     const btnDeleteOfModal = document.getElementById('btn_delete_of_modal')
     const btnDelete = document.querySelectorAll('#btn_delete')
     const btnRestore = document.querySelectorAll('.btn-restore')
+
+    // input check handle
+    const formContainer = document.forms['container-form']
+    const checkAllBtn = document.getElementById('checkAll')
+    const listCheckBoxBtn = document.querySelectorAll("input[name='courseIDs[]']")
+    const btnAction = document.querySelector('.btn-action')
+
+    checkAllBtn.onchange = () => {
+        var isCheckAll = checkAllBtn.checked
+        for(let i = 0; i < listCheckBoxBtn.length; i++) {
+            listCheckBoxBtn[i].checked = isCheckAll
+        }
+        reRenderBtnAction()
+    }
+
+    for(let i = 0; i < listCheckBoxBtn.length; i++) {
+        listCheckBoxBtn[i].onchange = () => {
+            var countChecked = listCheckBoxBtn.length === document.querySelectorAll("input[name='courseIDs[]']:checked").length
+            checkAllBtn.checked = countChecked
+            reRenderBtnAction()
+        }
+    }
+
+    function reRenderBtnAction () {
+        var checkedCount = document.querySelectorAll("input[name='courseIDs[]']:checked").length
+        if(checkedCount > 1) {
+            btnAction.classList.remove('disabled')
+        } else {
+            btnAction.classList.add('disabled')
+        }
+    }
+
+    btnAction.onsubmit = () => {
+        var isSubmitable = btnAction.hasClass('disabled')
+        if(!isSubmitable) {
+            formContainer.submit()
+        }
+    }
 
     let courseID;
     for(var i = 0; i < btnDelete.length; i++) {

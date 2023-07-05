@@ -87,6 +87,29 @@ class CourseController {
                 break;
         }
     }
+
+    // [POST] /courses/trash/handle-action
+    handleTrashAction(req, res, next) {
+        switch (req.body.action) {
+            case 'restore':
+                req.body.courseIDs.map((id) => {
+                    Course.restore({ _id: id })
+                        .then(() => {
+                            res.redirect('/me/trash/courses');
+                        })
+                        .catch(next);
+                });
+            case 'force':
+            // Course.deleteOne({ _id: req.params.id })
+            //     .then(() => {
+            //         res.redirect('/me/trash/courses');
+            //     })
+            //     .catch(next);
+            // res.json(req.body);
+            default:
+                break;
+        }
+    }
 }
 
 module.exports = new CourseController();
