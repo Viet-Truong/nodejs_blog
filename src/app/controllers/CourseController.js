@@ -100,12 +100,13 @@ class CourseController {
                         .catch(next);
                 });
             case 'force':
-            // Course.deleteOne({ _id: req.params.id })
-            //     .then(() => {
-            //         res.redirect('/me/trash/courses');
-            //     })
-            //     .catch(next);
-            // res.json(req.body);
+                req.body.courseIDs.map((id) => {
+                    Course.deleteOne({ _id: id })
+                        .then(() => {
+                            res.redirect('/me/trash/courses');
+                        })
+                        .catch(next);
+                });
             default:
                 break;
         }
