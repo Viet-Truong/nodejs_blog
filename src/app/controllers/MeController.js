@@ -4,25 +4,18 @@ class MeController {
     // [GET] /stored/courses
     storedCourses(req, res, next) {
         let courseQuery = Course.find({}).lean();
+        if (req.query.hasOwnProperty('_sort')) {
+            const isValidType = ['asc', 'desc'].includes(req.query.type);
+            courseQuery = courseQuery.sort({
+                [req.query.column]: isValidType ? req.query.type : 'desc',
+            });
+        }
 
         Promise.all([courseQuery, Course.countDocumentsDeleted()]).then(
             ([courses, deleted]) => {
                 res.render('me/stored_courses', { courses, deleted });
             }
         );
-        // Course.find({})
-        //     .lean()
-        //     .then((courses) => {
-        //         res.render('me/stored_courses', { courses });
-        //     })
-        //     .catch(next);
-
-        // Course.countDocumentsDeleted()
-        //     .lean()
-        //     .then((deletedCounts) => {
-        //         console.log(deletedCounts);
-        //     })
-        //     .catch(next);
     }
 
     // [GET] /trash/courses
