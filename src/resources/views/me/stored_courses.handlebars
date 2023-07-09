@@ -1,7 +1,7 @@
 <form class="container mt-4" name="container-form" method="POST" action="/courses/handle-action">
     <div>
         <h3>Khoá học của tôi</h3>
-        <a href="/me/trash/courses">Thùng rác</a>
+        <a href="/me/trash/courses">Thùng rác [{{deleted}}]</a>
     </div>
     <div class="action" style="display: flex; justify-content: flex-end">
         <select class="form-select" name="action" required aria-label="Default select example" style="width: 200px; margin-right: 20px">
@@ -114,7 +114,7 @@
         }
     }
 
-    btnAction.onsubmit = () => {
+    formContainer.onsubmit = () => {
         var isSubmitable = btnAction.hasClass('disabled')
         if(!isSubmitable) {
             formContainer.submit()
